@@ -1,0 +1,45 @@
+- hosts: all
+  tasks:
+  # setenforce 0
+  - name: Disable SELinux
+    selinux:
+      state: disabled
+
+  # yum install httpd -y
+  - name: Install Apache
+    yum:
+      name: httpd
+      state: latest
+
+  # systemctl start/enable httpd
+  - name: Start and Enable Apache
+    systemd:
+      name: httpd
+      state: started
+      enabled: yes
+      
+  # curl https://www.free-css.com/assets/files/free-css-templates/download/page296/oxer.zip -o /tmp/oxer.zip
+  - name: Download Template
+    get_url:
+      url: https://www.free-css.com/assets/files/free-css-templates/download/page296/oxer.zip
+      dest: /tmp/oxer.zip
+ 
+  # yum install unzip -y 
+  - name: Install Unzip
+    yum:
+      name: unzip
+      state: latest
+
+  # unzip /tmp/oxer.zip
+  - name: Extract Template
+    unarchive:
+      src: /tmp/oxer.zip
+      dest: /tmp/
+      remote_src: yes
+
+  # mv /tmp/oxer-html/* /var/www/html/
+  - name: Move Template file to /var/www/html
+    shell: "mv /tmp/oxer-html/* /var/www/html/"
+    args:
+      creates: /var/www/html/about.html
+      
